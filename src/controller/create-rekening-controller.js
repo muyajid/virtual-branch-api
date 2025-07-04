@@ -112,8 +112,8 @@ async function verifyEmail(req, res) {
       return;
     }
     const query_token = query[0].token;
-    
-    if (verif_code !== query_token) {
+
+    if (parseInt(verif_code) !== parseInt(query_token)) {
       res.status(401).json({
         message: `Code verifikasi invalid`,
       });

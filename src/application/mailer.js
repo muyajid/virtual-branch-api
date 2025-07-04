@@ -1,11 +1,13 @@
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config();
 
 async function mailer(message, gmail) {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'kamuyazidkan@gmail.com',
-            pass: 'hrcs vtjk oqzl ykmz'
+            user: process.env.MAILER_USER,
+            pass: process.env.MAILER_PASS
         }
     });
 
