@@ -3,11 +3,13 @@ import {
   insertToken,
   selectToken,
   updateToken,
+  insertImage,
 } from "../model/create-rekening-model.js";
 import { v4 as uuid } from "uuid";
 import CryptoJS from "crypto-js";
 import dotenv from "dotenv";
 import { mailer } from "../application/mailer.js";
+import multer from "../midleware/multer.js"
 
 dotenv.config();
 
@@ -133,6 +135,34 @@ async function verifyEmail(req, res) {
       message: `Gagal memverifikasi`,
       eror: err.message,
     });
+  }
+}
+
+async function verifyFace(req, res) {
+  try {
+    const { fileName } = req.body;
+    const imagePath = req.file.fileName
+
+    if (!fileName) {
+      res.status(401).json({
+        mesage: `Tidak ada data`
+      });
+
+      return;
+    }
+
+    const data = {
+      imgUrl: `http://localhost:${process.env.PORT}/uploads/${imagePath}`,
+      imgPath: imagePath
+    };
+
+    await insertImage(data);
+
+    res.json({
+      message: ``
+    })
+  } catch (err) {
+    
   }
 }
 

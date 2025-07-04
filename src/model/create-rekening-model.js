@@ -43,20 +43,35 @@ async function insertToken(data) {
 }
 
 async function selectToken(token) {
-  const query = await db.query(`
+  const query = await db.query(
+    `
         SELECT * FROM verification_email WHERE token = ?`,
-  [token]);
+    [token]
+  );
   return query;
 }
 
 async function updateToken(id, verifed) {
-  const query = await db.query(`
+  const query = await db.query(
+    `
         UPDATE verification_email
         SET verified = ?
         WHERE id = ?`,
-  [verifed, id]);
+    [verifed, id]
+  );
 
   return query;
 }
 
-export { insert, insertToken, selectToken, updateToken };
+async function insertImage(data) {
+  const query = await db.query(
+    `
+    INSERT INTO verification_fase (img_url, img_path)
+    VALUE (?,?)`,
+    [data.img_url, data.img_path]
+  );
+
+  return query;
+};
+
+export { insert, insertToken, selectToken, updateToken, insertImage };
