@@ -1,6 +1,7 @@
 import { insert, select } from "../model/account-model.js";
 import { v4 as uuid } from "uuid";
 import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 
 async function register(req, res) {
     try {
@@ -53,13 +54,21 @@ async function login(req, res) {
             res.status(401).json({ message: `Login gagal password tidak sesuai` });
             return;
         }
+        
+        const payload = { id: query.id, username: query.username };
+        const secretKey = process.env.JWT_SECRET;
 
+        const JWTtoken = jwt.sign(payload, secretKey, { expiresIn: '1h' });
+        console.log(`Token JWT => ${JWTtoken}`);
+    
+        
         res.json({
             message: `Login berhasil`,
             data: {
                 id: query.id,
                 username: query.username
-            }
+            },
+            token: JWTtoken
         });
 
     } catch (err) {
