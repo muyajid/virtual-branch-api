@@ -1,0 +1,32 @@
+import db from "../application/db.js";
+
+async function insert(data) {
+    const query = await db.query(`
+        INSERT INTO rekening (
+            id, nama_lengkap, tempat_lahir, tanggal_lahir, jenis_kelamin,
+            alamat_ktp, alamat_domisili, no_ktp, status_pernikahan,
+            pekerjaan, npwp, no_hp, email, penghasilan, tujuan, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+    `, [
+        data.id,
+        data.nama_lengkap,
+        data.tempat_lahir,
+        data.tanggal_lahir,
+        data.jenis_kelamin,
+        data.alamat_ktp,
+        data.alamat_domisili,
+        data.no_ktp,
+        data.status_pernikahan,
+        data.pekerjaan ?? null,
+        data.npwp ?? null,
+        data.no_hp,
+        data.email,
+        data.penghasilan ?? null,
+        data.tujuan,
+        data.status
+    ]);
+
+    return query;
+}
+
+export { insert };
