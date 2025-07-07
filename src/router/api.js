@@ -1,14 +1,22 @@
 import express from "express";
 import { register, login } from "../controller/account-controller.js";
 import { authJWTVerification } from "../midleware/auth.js";
-import { createRekening, verifyEmail } from "../controller/create-rekening-controller.js";
+import {
+  createRekening,
+  verifyEmail,
+  verifyFace,
+} from "../controller/create-rekening-controller.js";
+import { upload } from "../midleware/multer.js";
 
 const apiRoute = express.Router();
 
-apiRoute.use(express.json());
-apiRoute.post("/api/auth/register", register);
-apiRoute.post("/api/auth/login", login);
+apiRoute.post("/api/auth/register", express.json(), register);
+apiRoute.post("/api/auth/login", express.json(), login);
 
-apiRoute.post("/api/create-rekening", authJWTVerification, createRekening);
-apiRoute.post("/api/verify-email", authJWTVerification, verifyEmail)
+apiRoute.post("/api/rekening/pembukaan", express.json(), authJWTVerification, createRekening);
+apiRoute.post("/api/rekening/verify-email", express.json(), authJWTVerification, verifyEmail);
+
+apiRoute.use("/uploads", express.static("uploads"));
+apiRoute.post("/api/rekening/verify-wajah", authJWTVerification, upload.fields([{ name: "img_ktp", maxCount: 1}, { name: "img_wajah", maxCount: 1 }]), verifyFace);
+
 export { apiRoute };

@@ -9,7 +9,6 @@ import { v4 as uuid } from "uuid";
 import CryptoJS from "crypto-js";
 import dotenv from "dotenv";
 import { mailer } from "../application/mailer.js";
-import multer from "../midleware/multer.js"
 
 dotenv.config();
 
@@ -105,7 +104,7 @@ async function verifyEmail(req, res) {
     const { verif_code } = req.body;
 
     const [query] = await selectToken(verif_code);
-    
+
     if (new Date() > new Date(query[0].expired)) {
       res.status(401).json({
         message: `Code verifikasi kadaluarsa`,
@@ -128,7 +127,6 @@ async function verifyEmail(req, res) {
     res.status(200).json({
       message: `Code verifikasi valid, email terverifikasi`,
     });
-
   } catch (err) {
     console.error(`Terjadi eror => ${err.message}`);
     res.json({
@@ -140,30 +138,29 @@ async function verifyEmail(req, res) {
 
 async function verifyFace(req, res) {
   try {
-    const { fileName } = req.body;
-    const imagePath = req.file.fileName
+    const baseUrl = `${req.protocol}://${req.get('host')}/`;
+    
+    const img_ktp_url = `${baseUrl}uploads/${req.files[`img_ktp`][0].filename}`;
+    const img_wajah_url = `${baseUrl}uploads/${req.files[`img_wajah`][0].filename}`;
 
-    if (!fileName) {
-      res.status(401).json({
-        mesage: `Tidak ada data`
-      });
-
-      return;
-    }
-
-    const data = {
-      imgUrl: `http://localhost:${process.env.PORT}/uploads/${imagePath}`,
-      imgPath: imagePath
-    };
-
-    await insertImage(data);
+    await insertImage(img_ktp_url, img_wajah_url);
 
     res.json({
-      message: ``
-    })
-  } catch (err) {
-    
-  }
-}
+      message: `Data wajah dan ktp berhasil di upload`,
+      data: {
+        ktp: img_ktp_url,
+        wajah: img_wajah_url,
+      }
+    });
 
-export { createRekening, verifyEmail };
+  } catch (err) {
+    console.error(`Terjadi eror => ${err.message}`);
+    res.json({
+      message: `Data wajah dan ktp gagal di upload`,
+      eror: err.message
+    })
+  };
+};
+
+
+export { createRekening, verifyEmail, verifyFace };

@@ -63,15 +63,13 @@ async function updateToken(id, verifed) {
   return query;
 }
 
-async function insertImage(data) {
+async function insertImage(img_ktp_url, img_wajah_url) {
   const query = await db.query(
-    `
-    INSERT INTO verification_fase (img_url, img_path)
-    VALUE (?,?)`,
-    [data.img_url, data.img_path]
+    "INSERT INTO verification_face (img_ktp, img_face) VALUES(?,?)",
+    [img_ktp_url, img_wajah_url]
   );
 
-  return query;
-};
+return query;
+}
 
-export { insert, insertToken, selectToken, updateToken, insertImage };
+export { insert, insertToken, selectToken, updateToken, insertImage};
