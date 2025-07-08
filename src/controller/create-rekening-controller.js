@@ -11,7 +11,7 @@ import dotenv from "dotenv";
 import { mailer } from "../application/mailer.js";
 
 dotenv.config();
-
+const generateId = uuid().replace(/-/g, "");
 async function createRekening(req, res) {
   try {
     const {
@@ -48,7 +48,6 @@ async function createRekening(req, res) {
       return;
     }
 
-    const generateId = uuid().replace(/-/g, "");
     const enkripKtp = CryptoJS.AES.encrypt(
       no_ktp.toString(),
       process.env.CRYPTO_SECRET
@@ -156,7 +155,7 @@ async function verifyFace(req, res) {
     const img_ktp_url = `${baseUrl}uploads/${req.files[`img_ktp`][0].filename}`;
     const img_wajah_url = `${baseUrl}uploads/${req.files[`img_wajah`][0].filename}`;
 
-    await insertImage(img_ktp_url, img_wajah_url);
+    await insertImage(generateId ,img_ktp_url, img_wajah_url);
 
     res.json({
       message: `Data wajah dan ktp berhasil di upload`,

@@ -64,10 +64,10 @@ async function updateToken(id, verifed) {
   return query;
 }
 
-async function insertImage(img_ktp_url, img_wajah_url) {
+async function insertImage(id, img_ktp_url, img_wajah_url) {
   const query = await db.query(
-    "INSERT INTO verification_face (img_ktp, img_face) VALUES(?,?)",
-    [img_ktp_url, img_wajah_url]
+    "INSERT INTO verification_face (id,img_ktp, img_face) VALUES(?,?,?)",
+    [id, img_ktp_url, img_wajah_url]
   );
 
 return query;
