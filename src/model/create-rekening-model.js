@@ -6,8 +6,8 @@ async function insert(data) {
         INSERT INTO rekening (
             id, nama_lengkap, tempat_lahir, tanggal_lahir, jenis_kelamin,
             alamat_ktp, alamat_domisili, no_ktp, status_pernikahan,
-            pekerjaan, npwp, no_hp, email, penghasilan, tujuan, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
+            pekerjaan, npwp, no_hp, email, penghasilan, tujuan, jenis, status
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
     `,
     [
       data.id,
@@ -25,6 +25,7 @@ async function insert(data) {
       data.email,
       data.penghasilan ?? null,
       data.tujuan,
+      data.jenis,
       data.status,
     ]
   );

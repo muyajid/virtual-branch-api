@@ -29,6 +29,7 @@ async function createRekening(req, res) {
       email,
       penghasilan,
       tujuan,
+      jenis,
       status,
     } = req.body;
 
@@ -36,6 +37,14 @@ async function createRekening(req, res) {
       res.status(401).json({
         message: `Email tidak valid, harus mengandung @`,
       });
+      return;
+    }
+
+    if (jenis !== "Rekening Tabungan" && jenis !== "Rekening Giro" && jenis !== "Rekening Deposito") {
+      res.status(401).json({
+        message: `Jenis rekening tidak valid`
+      });
+
       return;
     }
 
@@ -68,6 +77,7 @@ async function createRekening(req, res) {
       email: email,
       penghasilan: penghasilan,
       tujuan: tujuan,
+      jenis: jenis,
       status: status,
     };
 
@@ -88,6 +98,9 @@ async function createRekening(req, res) {
       message: `Formulir diterima kode verifikasi di kirim ke email`,
       data: {
         id: generateId,
+        nama: nama_lengkap,
+        jenis_rekening: jenis,
+        status: status
       },
     });
   } catch (err) {
