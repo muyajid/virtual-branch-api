@@ -73,4 +73,36 @@ async function insertImage(id, img_ktp_url, img_wajah_url) {
 return query;
 }
 
-export { insert, insertToken, selectToken, updateToken, insertImage};
+async function selectRekening() {
+  const query = await db.query(
+    `
+    SELECT
+    u.id AS id_rekening,
+    u.nama_lengkap,
+    u.tempat_lahir,
+    u.tanggal_lahir,
+    u.jenis_kelamin,
+    u.alamat_ktp,
+    u.alamat_domisili,
+    u.pekerjaan,
+    u.penghasilan AS penghasilan_perbulan,
+    u.status_pernikahan,
+    u.no_ktp,
+    u.npwp,
+    u.no_hp,
+    u.email,
+    u.tujuan,
+    u.jenis AS jenis_rekening,
+    i.verified AS email_status,
+    a.img_ktp,
+    a.img_face,
+    u.status
+    FROM rekening u
+    JOIN verification_email i ON u.id = i.id
+    JOIN verification_face a ON u.id = a.id
+    `
+  );
+
+  return query;
+}
+export { insert, insertToken, selectToken, updateToken, insertImage, selectRekening};

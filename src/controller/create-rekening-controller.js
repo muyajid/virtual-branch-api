@@ -4,6 +4,7 @@ import {
   selectToken,
   updateToken,
   insertImage,
+  selectRekening
 } from "../model/create-rekening-model.js";
 import { v4 as uuid } from "uuid";
 import CryptoJS from "crypto-js";
@@ -134,7 +135,7 @@ async function verifyEmail(req, res) {
       return;
     }
 
-    await updateToken(query[0].id, 1);
+    await updateToken(query[0].id, "Verified");
 
     res.status(200).json({
       message: `Code verifikasi valid, email terverifikasi`,
@@ -174,5 +175,38 @@ async function verifyFace(req, res) {
   };
 };
 
+async function daftarPengajuan(req, res) {
+  try {
+    const [query] = await selectRekening();
 
-export { createRekening, verifyEmail, verifyFace };
+    const data = query.map((rekening) => {
+      const noKtpToByte = CryptoJS.AES.decrypt(rekening.no_ktp, process.env.CRYPTO_SECRET);
+      const noKtpToString = noKtpToByte.toString();
+
+      let npwpToString = null;
+      if (rekening.npwp !== null) {
+        const npwpToByte = CryptoJS.AES.decrypt(rekening.npwp, process.env.CRYPTO_SECRET);
+        npwpToString = npwpToByte.toString();
+      }
+      return {
+        ...rekening,
+        no_ktp: noKtpToString,
+        npwp: npwpToString
+      }
+    });
+
+    res.json({
+      data: data,
+      total: data.length
+    });
+  } catch (err) {
+    console.error(`Terjadi eror => ${err.message}`);
+    res.json({
+      message: `Gagal mengambil data => ${err.message}`,
+      eror: err.message
+    });
+  }
+}
+
+
+export { createRekening, verifyEmail, verifyFace, daftarPengajuan };
