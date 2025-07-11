@@ -28,6 +28,12 @@ async function insertData(data) {
     return query;
 };
 
+async function selectData() {
+    const [query] = await db.query(`SELECT * FROM pinjaman`);
+    return query;
+}
+
 export {
     insertData,
+    selectData,
 }

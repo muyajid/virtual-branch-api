@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { v4 as uuid } from "uuid";
-import { insertData } from "../model/pengajuan-pinjaman-model.js";
+import { insertData, selectData } from "../model/pengajuan-pinjaman-model.js";
 
 async function pengajuanPinjaman(req, res) {
   try {
@@ -82,6 +82,23 @@ async function pengajuanPinjaman(req, res) {
       eror: err.message,
     });
   }
-}
+};
 
-export { pengajuanPinjaman };
+async function daftarPinjaman(req, res) {
+  try {
+    const query = await selectData();
+    res.json({
+      data: query,
+      total: query.length
+    });
+  } catch (err) {
+    console.error(`Gagal mengambil daftar pinjaman => ${err.message}`);
+    res.json({
+      message: `Gagal mengambil daftar pinjaman`,
+      eror: err.message
+    })
+  }  
+};
+
+
+export { pengajuanPinjaman, daftarPinjaman };
