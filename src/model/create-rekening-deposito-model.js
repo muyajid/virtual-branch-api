@@ -27,4 +27,13 @@ async function insertData(data) {
     return query;
 }
 
-export { insertData }
+async function selectData() {
+    const [query] = await db.query(`SELECT * FROM deposito`);
+    return query;
+}
+
+async function selectId(id) {
+    const [query] = await db.query(`SELECT * FROM deposito WHERE id = ?`, [id]);
+    return query;
+}
+export { insertData, selectData, selectId}

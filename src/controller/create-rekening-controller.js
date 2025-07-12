@@ -12,7 +12,6 @@ import dotenv from "dotenv";
 import { mailer } from "../application/mailer.js";
 
 dotenv.config();
-const generateId = uuid().replace(/-/g, "");
 async function createRekening(req, res) {
   try {
     const {
@@ -49,6 +48,7 @@ async function createRekening(req, res) {
       return;
     }
 
+    const generateId = uuid().replace(/-/g, "");
     const enkripKtp = CryptoJS.AES.encrypt(
       no_ktp.toString(),
       process.env.CRYPTO_SECRET
@@ -154,9 +154,19 @@ async function verifyFace(req, res) {
     const baseUrl = `${req.protocol}://${req.get('host')}/`;
     
     const img_ktp_url = `${baseUrl}uploads/${req.files[`img_ktp`][0].filename}`;
-    const img_wajah_url = `${baseUrl}uploads/${req.files[`img_wajah`][0].filename}`;
+    const img_wajah_url = `${baseUrl}uploads/${req.files[`img_face`][0].filename}`;
 
-    await insertImage(generateId ,img_ktp_url, img_wajah_url);
+    const id = req.query.id;
+    if (!id) {
+      res.status(401).json({
+        message: `Query id diperlukan dengan value sesuai dengan id rekening`
+      });
+
+      return;
+    }
+    console.log("ID yang dikirim:", req.query.id);
+
+    await insertImage(id ,img_ktp_url, img_wajah_url);
 
     res.json({
       message: `Data wajah dan ktp berhasil di upload`,
@@ -174,6 +184,7 @@ async function verifyFace(req, res) {
     })
   };
 };
+
 
 async function daftarPengajuan(req, res) {
   try {

@@ -11,7 +11,7 @@ import {
   pengajuanPinjaman,
   daftarPinjaman,
 } from "../controller/pengajuan-pinjaman-controller.js";
-import { createDeposito } from "../controller/create-rekening-deposito-controller.js";
+import { createDeposito, daftarDeposito, searchId } from "../controller/create-rekening-deposito-controller.js";
 import { uploader } from "../midleware/multer.js";
 
 const apiRoute = express.Router();
@@ -35,9 +35,9 @@ apiRoute.use("/uploads", express.static("uploads"));
 apiRoute.post(
   "/api/rekening/verify-wajah",
   authJWTVerification,
-  uploader().fields([
+  uploader("uploads").fields([
     { name: "img_ktp", maxCount: 1 },
-    { name: "img_wajah", maxCount: 1 },
+    { name: "img_face", maxCount: 1}
   ]),
   verifyFace
 );
@@ -68,5 +68,6 @@ apiRoute.get(
 );
 
 apiRoute.post("/api/deposito/pembukaan",express.json(), authJWTVerification, createDeposito);
-
+apiRoute.get("/api/deposito/daftar-pengajuan", authJWTVerification, daftarDeposito);
+apiRoute.get("/api/deposito/daftar-pengajuan/search", authJWTVerification ,searchId);
 export { apiRoute };

@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { insertData } from "../model/create-rekening-deposito-model.js";
+import { insertData, selectData, selectId } from "../model/create-rekening-deposito-model.js";
 async function createDeposito(req, res) {
   try {
     const {
@@ -76,4 +76,53 @@ async function createDeposito(req, res) {
   }
 };
 
-export {createDeposito}
+async function daftarDeposito(req, res) {
+  try {
+    const query = await selectData();
+    res.json({
+      data: query,
+      total: query.length
+    });
+  } catch (err) {
+    console.error(`Gagal mengambil daftar deposito => ${err.message}`);
+    res.status(500).json({
+      message: `Gagal mengambil daftar deposito`,
+      eror: err.message
+    })    
+  }
+}
+
+async function searchId(req, res) {
+  try {
+    const { id } = req.query
+    const query = await selectId(id);
+    console.log(query);
+    
+    if (!id) {
+      res.status(401).json({
+        message: `Quey id diperlukan`
+      })
+      return;
+    }
+
+    if (query.length === 0) {
+      res.status(404).json({
+        message: `Id tidak ditemukan`
+      })
+      return;
+    }
+
+    res.json({
+      message: `Id ditemukan`,
+      data: query,
+      total: query.length
+    })
+  } catch (err) {
+    console.error(`Gagal mengambil data => ${err.message}`);
+    res.json({
+      message: `Gagal mengambil data`,
+      eror: err.message
+    })
+  }
+}
+export {createDeposito, daftarDeposito, searchId }
