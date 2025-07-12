@@ -27,7 +27,7 @@ async function register(req, res) {
 
     } catch (err) {
         console.error(`Terjadi eror => ${err.message}`);
-        res.json({
+        res.status(500).json({
             message: `Register account gagal`,
             eror: err.message
         });
@@ -73,7 +73,7 @@ async function login(req, res) {
 
     } catch (err) {
         console.error(`Terjadi eror => ${err.message}`);
-        res.json({
+        res.status(500).json({
             message: `Login gagal`,
             eror: err.message
         });

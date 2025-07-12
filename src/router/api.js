@@ -7,7 +7,11 @@ import {
   verifyFace,
   daftarPengajuan,
 } from "../controller/create-rekening-controller.js";
-import { pengajuanPinjaman, daftarPinjaman } from "../controller/pengajuan-pinjaman-controller.js";
+import {
+  pengajuanPinjaman,
+  daftarPinjaman,
+} from "../controller/pengajuan-pinjaman-controller.js";
+import { createDeposito } from "../controller/create-rekening-deposito-controller.js";
 import { uploader } from "../midleware/multer.js";
 
 const apiRoute = express.Router();
@@ -57,6 +61,12 @@ apiRoute.post(
   pengajuanPinjaman
 );
 apiRoute.use("/uploads_dokumen", express.static("uploads_dokumen"));
-apiRoute.get("/api/pinjaman/daftar-pengajuan", authJWTVerification ,daftarPinjaman);
+apiRoute.get(
+  "/api/pinjaman/daftar-pengajuan",
+  authJWTVerification,
+  daftarPinjaman
+);
+
+apiRoute.post("/api/deposito/pembukaan",express.json(), authJWTVerification, createDeposito);
 
 export { apiRoute };

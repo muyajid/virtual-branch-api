@@ -105,7 +105,7 @@ async function createRekening(req, res) {
     });
   } catch (err) {
     console.error(`Terjadi eror ${err.message}`);
-    res.json({
+    res.status(500).json({
       message: `Formulir gagal di terima`,
       error: err.message,
     });
@@ -142,7 +142,7 @@ async function verifyEmail(req, res) {
     });
   } catch (err) {
     console.error(`Terjadi eror => ${err.message}`);
-    res.json({
+    res.status(500).json({
       message: `Gagal memverifikasi`,
       eror: err.message,
     });
@@ -168,7 +168,7 @@ async function verifyFace(req, res) {
 
   } catch (err) {
     console.error(`Terjadi eror => ${err.message}`);
-    res.json({
+    res.status(500).json({
       message: `Data wajah dan ktp gagal di upload`,
       eror: err.message
     })
@@ -201,7 +201,7 @@ async function daftarPengajuan(req, res) {
     });
   } catch (err) {
     console.error(`Terjadi eror => ${err.message}`);
-    res.json({
+    res.status(500).json({
       message: `Gagal mengambil data => ${err.message}`,
       eror: err.message
     });

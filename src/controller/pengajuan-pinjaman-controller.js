@@ -77,7 +77,7 @@ async function pengajuanPinjaman(req, res) {
     });
   } catch (err) {
     console.error(`Terjadi eror => ${err.message}`);
-    res.json({
+    res.status(500).json({
       message: `Pengajuan pinjaman gagal`,
       eror: err.message,
     });
@@ -93,7 +93,7 @@ async function daftarPinjaman(req, res) {
     });
   } catch (err) {
     console.error(`Gagal mengambil daftar pinjaman => ${err.message}`);
-    res.json({
+    res.status(500).json({
       message: `Gagal mengambil daftar pinjaman`,
       eror: err.message
     })
