@@ -13,6 +13,7 @@ import {
 } from "../controller/pengajuan-pinjaman-controller.js";
 import { createDeposito, daftarDeposito, searchId } from "../controller/create-rekening-deposito-controller.js";
 import { uploader } from "../midleware/multer.js";
+import { postAnswer, postQuestion } from "../controller/forum-diskusi-controller.js";
 
 const apiRoute = express.Router();
 
@@ -70,4 +71,7 @@ apiRoute.get(
 apiRoute.post("/api/deposito/pembukaan",express.json(), authJWTVerification, createDeposito);
 apiRoute.get("/api/deposito/daftar-pengajuan", authJWTVerification, daftarDeposito);
 apiRoute.get("/api/deposito/daftar-pengajuan/search", authJWTVerification ,searchId);
+
+apiRoute.post("/api/forum/question", express.json(), authJWTVerification, postQuestion);
+apiRoute.post("/api/forum/answer", express.json(), authJWTVerification, postAnswer)
 export { apiRoute };

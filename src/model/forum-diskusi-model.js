@@ -13,6 +13,34 @@ async function insertDataQuestion(data) {
     return query;
 }
 
+async function insertDataAnswer(data) {
+    const query = await db.query(
+        `
+        INSERT INTO forum_answer (id, username, question_id, body)
+        VALUES (?,?,?,?)
+        `,
+        [
+            data.id,
+            data.username,
+            data.question_id,
+            data.body
+        ]
+    );
+
+    return query;
+}
+
+async function selectQuestion(id) {
+    const [query] = await db.query(
+        `SELECT * FROM forum_question WHERE id = ?`,
+        [id]
+    );
+
+    return query;
+}
+
 export {
-    insertDataQuestion
+    insertDataQuestion,
+    insertDataAnswer,
+    selectQuestion
 }
