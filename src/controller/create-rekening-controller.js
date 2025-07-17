@@ -4,7 +4,7 @@ import {
   selectToken,
   updateToken,
   insertImage,
-  selectRekening
+  selectRekening,
 } from "../model/create-rekening-model.js";
 import { v4 as uuid } from "uuid";
 import CryptoJS from "crypto-js";
@@ -29,8 +29,7 @@ async function createRekening(req, res) {
       email,
       penghasilan,
       tujuan,
-      jenis,
-      status,
+      jenis
     } = req.body;
 
     if (!email.includes("@")) {
@@ -40,9 +39,13 @@ async function createRekening(req, res) {
       return;
     }
 
-    if (jenis !== "Rekening Tabungan" && jenis !== "Rekening Giro" && jenis !== "Rekening Deposito") {
+    if (
+      jenis !== "Rekening Tabungan" &&
+      jenis !== "Rekening Giro" &&
+      jenis !== "Rekening Deposito"
+    ) {
       res.status(401).json({
-        message: `Jenis rekening tidak valid`
+        message: `Jenis rekening tidak valid`,
       });
 
       return;
@@ -77,8 +80,7 @@ async function createRekening(req, res) {
       email: email,
       penghasilan: penghasilan,
       tujuan: tujuan,
-      jenis: jenis,
-      status: status,
+      jenis: jenis
     };
 
     const query = await insert(data);
@@ -99,8 +101,7 @@ async function createRekening(req, res) {
       data: {
         id: generateId,
         nama: nama_lengkap,
-        jenis_rekening: jenis,
-        status: status
+        jenis_rekening: jenis
       },
     });
   } catch (err) {
@@ -116,29 +117,42 @@ async function verifyEmail(req, res) {
   try {
     const { verif_code } = req.body;
 
-    const [query] = await selectToken(verif_code);
-
-    if (new Date() > new Date(query[0].expired)) {
+    if (!verif_code) {
       res.status(401).json({
-        message: `Code verifikasi kadaluarsa`,
+        message: `verif_code diperlukan`,
       });
 
       return;
     }
+
+    const query = await selectToken(verif_code);
+
+    const query_expired = new Date(query[0].expired);
+    if (new Date() > query_expired) {
+      res.status(400).json({
+        message: `Code verifikasi kadaluwarsa`,
+        expired: query_expired,
+      });
+
+      return;
+    }
+
     const query_token = query[0].token;
-
-    if (parseInt(verif_code) !== parseInt(query_token)) {
+    if (verif_code != query_token) {
       res.status(401).json({
-        message: `Code verifikasi invalid`,
+        message: `Code verifikasi tidak valid`,
       });
 
       return;
     }
 
-    await updateToken(query[0].id, "Verified");
+    const query_id = query[0].id;
+    await updateToken(query_id, "Verified");
 
     res.status(200).json({
+      id: query_id,
       message: `Code verifikasi valid, email terverifikasi`,
+      status: "Verified",
     });
   } catch (err) {
     console.error(`Terjadi eror => ${err.message}`);
@@ -151,73 +165,77 @@ async function verifyEmail(req, res) {
 
 async function verifyFace(req, res) {
   try {
-    const baseUrl = `${req.protocol}://${req.get('host')}/`;
-    
+    const baseUrl = `${req.protocol}://${req.get("host")}/`;
+
     const img_ktp_url = `${baseUrl}uploads/${req.files[`img_ktp`][0].filename}`;
-    const img_wajah_url = `${baseUrl}uploads/${req.files[`img_face`][0].filename}`;
+    const img_wajah_url = `${baseUrl}uploads/${
+      req.files[`img_face`][0].filename
+    }`;
 
     const id = req.query.id;
     if (!id) {
       res.status(401).json({
-        message: `Query id diperlukan dengan value sesuai dengan id rekening`
+        message: `Query id diperlukan dengan value sesuai dengan id rekening`,
       });
 
       return;
     }
-    console.log("ID yang dikirim:", req.query.id);
 
-    await insertImage(id ,img_ktp_url, img_wajah_url);
+    await insertImage(id, img_ktp_url, img_wajah_url);
 
     res.json({
       message: `Data wajah dan ktp berhasil di upload`,
       data: {
         ktp: img_ktp_url,
         wajah: img_wajah_url,
-      }
+      },
     });
-
   } catch (err) {
     console.error(`Terjadi eror => ${err.message}`);
     res.status(500).json({
       message: `Data wajah dan ktp gagal di upload`,
-      eror: err.message
-    })
-  };
-};
-
+      eror: err.message,
+    });
+  }
+}
 
 async function daftarPengajuan(req, res) {
   try {
     const [query] = await selectRekening();
 
     const data = query.map((rekening) => {
-      const noKtpToByte = CryptoJS.AES.decrypt(rekening.no_ktp, process.env.CRYPTO_SECRET);
+      const noKtpToByte = CryptoJS.AES.decrypt(
+        rekening.no_ktp,
+        process.env.CRYPTO_SECRET
+      );
       const noKtpToString = noKtpToByte.toString();
 
       let npwpToString = null;
       if (rekening.npwp !== null) {
-        const npwpToByte = CryptoJS.AES.decrypt(rekening.npwp, process.env.CRYPTO_SECRET);
+        const npwpToByte = CryptoJS.AES.decrypt(
+          rekening.npwp,
+          process.env.CRYPTO_SECRET
+        );
         npwpToString = npwpToByte.toString();
       }
       return {
         ...rekening,
         no_ktp: noKtpToString,
-        npwp: npwpToString
-      }
+        npwp: npwpToString,
+      };
     });
 
     res.json({
       data: data,
-      total: data.length
+      total: data.length,
     });
   } catch (err) {
     console.error(`Terjadi eror => ${err.message}`);
     res.status(500).json({
       message: `Gagal mengambil data => ${err.message}`,
-      eror: err.message
+      eror: err.message,
     });
   }
 }
-
 
 export { createRekening, verifyEmail, verifyFace, daftarPengajuan };

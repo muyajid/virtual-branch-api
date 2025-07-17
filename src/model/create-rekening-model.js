@@ -44,11 +44,11 @@ async function insertToken(data) {
 }
 
 async function selectToken(token) {
-  const query = await db.query(
-    `
-        SELECT * FROM verification_email WHERE token = ?`,
+  const [query] = await db.query(
+    `SELECT * FROM verification_email WHERE token = ?`,
     [token]
   );
+
   return query;
 }
 
@@ -70,7 +70,7 @@ async function insertImage(id, img_ktp_url, img_wajah_url) {
     [id, img_ktp_url, img_wajah_url]
   );
 
-return query;
+  return query;
 }
 
 async function selectRekening() {
@@ -98,11 +98,18 @@ async function selectRekening() {
     a.img_face,
     u.status
     FROM rekening u
-    JOIN verification_email i ON u.id = i.id
+    LEFT JOIN verification_email i ON u.id = i.id
     JOIN verification_face a ON u.id = a.id
     `
   );
 
   return query;
 }
-export { insert, insertToken, selectToken, updateToken, insertImage, selectRekening};
+export {
+  insert,
+  insertToken,
+  selectToken,
+  updateToken,
+  insertImage,
+  selectRekening,
+};
