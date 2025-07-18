@@ -6,8 +6,8 @@ async function insert(data) {
         INSERT INTO rekening (
             id, nama_lengkap, tempat_lahir, tanggal_lahir, jenis_kelamin,
             alamat_ktp, alamat_domisili, no_ktp, status_pernikahan,
-            pekerjaan, npwp, no_hp, email, penghasilan, tujuan, jenis, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
+            pekerjaan, npwp, no_hp, email, penghasilan, tujuan, jenis
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
     `,
     [
       data.id,
@@ -25,8 +25,7 @@ async function insert(data) {
       data.email,
       data.penghasilan ?? null,
       data.tujuan,
-      data.jenis,
-      data.status,
+      data.jenis
     ]
   );
 
@@ -99,7 +98,7 @@ async function selectRekening() {
     u.status
     FROM rekening u
     LEFT JOIN verification_email i ON u.id = i.id
-    JOIN verification_face a ON u.id = a.id
+    LEFT JOIN verification_face a ON u.id = a.id
     `
   );
 

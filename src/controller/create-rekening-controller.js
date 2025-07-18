@@ -29,7 +29,7 @@ async function createRekening(req, res) {
       email,
       penghasilan,
       tujuan,
-      jenis
+      jenis,
     } = req.body;
 
     if (!email.includes("@")) {
@@ -80,7 +80,7 @@ async function createRekening(req, res) {
       email: email,
       penghasilan: penghasilan,
       tujuan: tujuan,
-      jenis: jenis
+      jenis: jenis,
     };
 
     const query = await insert(data);
@@ -93,7 +93,10 @@ async function createRekening(req, res) {
       token: verifCode,
       expired: new Date(Date.now() + 5 * 60 * 1000),
     };
-    await mailer(`Kode verifikasi anda adalah ${verifCode}`, email);
+    await mailer(
+      `Halo ${nama_lengkap} Kode Verifikasi Kamu Adalah : ${verifCode} \n Jangan Beri Tahu Siapapun`,
+      email
+    );
     await insertToken(verifCodeData);
 
     res.json({
@@ -101,7 +104,7 @@ async function createRekening(req, res) {
       data: {
         id: generateId,
         nama: nama_lengkap,
-        jenis_rekening: jenis
+        jenis_rekening: jenis,
       },
     });
   } catch (err) {
